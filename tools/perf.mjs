@@ -1,6 +1,6 @@
 // Real-GPU performance pass (the test harness renders with SwiftShader): fps in the busiest scenes, load timings,
 // heap and download size, at desktop and phone sizes. Phone runs throttle the CPU 4× as a stand-in for a phone.
-//   node games/fishing/tools/perf.mjs [--swiftshader] [--cpu=4]
+//   node tools/perf.mjs [--swiftshader] [--cpu=4]
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
@@ -8,7 +8,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const GAME = path.resolve(HERE, '..'), ROOT = path.resolve(GAME, '../..');
+const GAME = path.resolve(HERE, '..'), ROOT = path.resolve(GAME);
 const require = createRequire(path.join(ROOT, 'shared/test-harness/package.json'));
 const { chromium } = require('playwright');
 const soft = process.argv.includes('--swiftshader');
@@ -21,7 +21,7 @@ for (const vp of ['desktop', 'mobile']) {
   const ctx = await browser.newContext(vp === 'mobile' ? { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true } : { viewport: { width: 1280, height: 800 } });
   const page = await ctx.newPage(); const cdp = await ctx.newCDPSession(page);
   if (vp === 'mobile') await cdp.send('Emulation.setCPUThrottlingRate', { rate: 4 });
-  const t0 = Date.now(); await page.goto(`http://127.0.0.1:${port}/games/fishing/index.html`);
+  const t0 = Date.now(); await page.goto(`http://127.0.0.1:${port}/index.html`);
   await page.waitForFunction(() => window.__game); const hooks = Date.now() - t0;
   const G = (m, ...a) => page.evaluate(([m, a]) => window.__game[m](...a), [m, a]);
   await page.waitForFunction(() => { const s = window.__game.getState(); return s.gfx && !s.gfx.loading && s.gfx.plates; }, null, { timeout: 60000 }); const ready = Date.now() - t0;

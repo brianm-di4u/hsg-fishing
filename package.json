@@ -1,0 +1,12 @@
+{
+  "name": "hsg-fishing",
+  "private": true,
+  "type": "module",
+  "description": "Ouachita Bass Classic: Fishing tournament on the local lakes",
+  "license": "MIT",
+  "scripts": {
+    "setup": "cd shared/test-harness && npm install && npx playwright install chromium",
+    "build": "node shared/tools/inline.mjs .",
+    "test": "node shared/test-harness/run.mjs ."
+  }
+}

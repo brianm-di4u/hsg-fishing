@@ -1,5 +1,5 @@
 // Before/after sheets: pairs screenshots with the same name from two milestones side by side.
-//   node games/fishing/tools/before-after.mjs [--before visual-before] [--after visual-final] [--extra review-final]
+//   node tools/before-after.mjs [--before visual-before] [--after visual-final] [--extra review-final]
 // Writes screenshots/<after>/before-after/<viewport>-NN.png. With --extra, adds GPU review shots from
 // screenshots/<extra>/ as a third column where a name matches the "gpu" map below.
 import fs from 'node:fs';
@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GAME = path.resolve(HERE, '..');
-const require = createRequire(path.resolve(GAME, '../../shared/test-harness/package.json'));
+const require = createRequire(path.resolve(GAME, 'shared/test-harness/package.json'));
 const { chromium } = require('playwright');
 const arg = (n, d) => { const i = process.argv.indexOf('--' + n); return i >= 0 ? process.argv[i + 1] : d; };
 const before = arg('before', 'visual-before'), after = arg('after', 'visual-final'), extra = arg('extra', null);

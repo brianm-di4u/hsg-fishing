@@ -1,5 +1,5 @@
 // AI-field calibration (AC28). Evaluates the game's own src/js/sim.js in Node and prints the mean winning
-// bag per campaign event over many seeds. Run: node games/fishing/tools/calibrate.mjs [seeds]
+// bag per campaign event over many seeds. Run: node tools/calibrate.mjs [seeds]
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';

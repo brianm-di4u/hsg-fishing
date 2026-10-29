@@ -1,6 +1,6 @@
 // Dev screenshots of the 3D scenes with the real GPU (the harness runs SwiftShader). Serves the repo locally,
 // runs a scenario through window.__game, saves PNGs to screenshots/dev/ and prints console errors and fps.
-//   node games/fishing/tools/shot.mjs <scenario> [--mobile] [--swiftshader] [--q=low] [--gl=0]
+//   node tools/shot.mjs <scenario> [--mobile] [--swiftshader] [--q=low] [--gl=0]
 // Scenarios are below (map-<lake>, spot-<id>, fight, night, ...).
 import fs from 'node:fs';
 import http from 'node:http';
@@ -9,7 +9,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const GAME = path.resolve(HERE, '..'), ROOT = path.resolve(GAME, '../..');
+const GAME = path.resolve(HERE, '..'), ROOT = path.resolve(GAME);
 const require = createRequire(path.join(ROOT, 'shared/test-harness/package.json'));
 const { chromium } = require('playwright');
 const args = process.argv.slice(2); const flag = (n) => args.find((a) => a.startsWith('--' + n));
@@ -29,7 +29,7 @@ const ctx = await browser.newContext(mobile ? { viewport: { width: 390, height: 
 const page = await ctx.newPage();
 const errs = []; page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') errs.push(m.type() + ': ' + m.text()); }); page.on('pageerror', (e) => errs.push('pageerror: ' + e.message));
 page.on('request', (q) => { if (!q.url().startsWith(`http://127.0.0.1:${port}`) && !q.url().startsWith('data:')) errs.push('EXTERNAL ' + q.url()); });
-await page.goto(`http://127.0.0.1:${port}/games/fishing/index.html${qs ? '?' + qs : ''}`);
+await page.goto(`http://127.0.0.1:${port}/index.html${qs ? '?' + qs : ''}`);
 try { await page.waitForFunction(() => window.__game, null, { timeout: 8000 }); } catch (e) { console.log(errs.join(' | ')); process.exit(1); }
 const G = (m, ...a) => page.evaluate(([m, a]) => window.__game[m](...a), [m, a]);
 const ready = async (ms = 15000) => { const end = Date.now() + ms; while (Date.now() < end) { if (await G('isIdle')) return; await page.waitForTimeout(100); } console.log('  (not idle)'); };

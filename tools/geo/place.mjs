@@ -1,7 +1,7 @@
 // Checks spot placement on the real lakes with the game's own code (src/js/lakes.js in Node):
 // snapped position, distance to shore, estimated map depth, run minutes from the ramp, and spots
 // that moved far when snapped. Then renders research/geo/preview-<lake>.png with the snapped spots.
-//   node games/fishing/tools/geo/place.mjs [lake ...]
+//   node tools/geo/place.mjs [lake ...]
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';

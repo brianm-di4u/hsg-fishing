@@ -1,6 +1,6 @@
 // Renders data/geo/<lake>.json to research/geo/preview-<lake>.png (water, hillshade, bridges, creeks, dams, islands,
 // spots and landmarks from src/js/data.js) with a lake-unit grid, for checking spot placement by eye.
-//   node games/fishing/tools/geo/preview.mjs [lake ...]
+//   node tools/geo/preview.mjs [lake ...]
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
-const require = createRequire(path.resolve(ROOT, '../../shared/test-harness/package.json'));
+const require = createRequire(path.resolve(ROOT, 'shared/test-harness/package.json'));
 const { chromium } = require('playwright');
 const argv = process.argv.slice(2); const pi = argv.indexOf('--placed');
 const placed = pi >= 0 ? JSON.parse(fs.readFileSync(argv[pi + 1], 'utf8')) : {};

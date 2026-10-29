@@ -1,6 +1,6 @@
 // Packs art-src/ into assets/pack-<name>.js: classic scripts that register base64 assets (see src/js/gfx/assets.js),
 // so images and models load under file:// and WebGL accepts the images (data: URIs are not tainted).
-//   node games/fishing/tools/pack-assets.mjs [--only pack1,pack2]
+//   node tools/pack-assets.mjs [--only pack1,pack2]
 // art-src/art.json: { "items": [ { "name": "fish-largemouth", "src": "fish/largemouth.png", "pack": "fish",
 //   "w": 768, "keyWhite": 22, "trim": true, "quality": 0.86 } ], "models": [ { "name": "boat", "src": "blender/export/boat.glb", "pack": "models" } ] }
 // Images are re-encoded to WebP with the harness's Chromium (no image libraries). Writes src/js/gfx/packs.json
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const GAME = path.resolve(HERE, '..'), SRC = path.join(GAME, 'art-src'), OUT = path.join(GAME, 'assets');
-const require = createRequire(path.resolve(GAME, '../../shared/test-harness/package.json'));
+const require = createRequire(path.resolve(GAME, 'shared/test-harness/package.json'));
 const { chromium } = require('playwright');
 const args = process.argv.slice(2); const oi = args.indexOf('--only'); const only = oi >= 0 ? args[oi + 1].split(',') : null;
 const spec = JSON.parse(fs.readFileSync(path.join(SRC, 'art.json'), 'utf8'));

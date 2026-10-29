@@ -1,5 +1,5 @@
 // Downloads the public-domain geodata the lake maps are built from into research/geo/raw/ (git-ignored).
-//   node games/fishing/tools/geo/fetch.mjs [--force]
+//   node tools/geo/fetch.mjs [--force]
 // Sources (all U.S. federal works, public domain):
 //   USGS National Hydrography Dataset (NHD), Waterbody - Large Scale (layer 12) and Line (layer 2, FType 343 dams)
 //     https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer

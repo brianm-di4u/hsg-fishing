@@ -1,5 +1,5 @@
 // Bakes research/geo/raw/ (see fetch.mjs) into data/geo/<lake>.json, the real lake geometry the game uses.
-//   node games/fishing/tools/geo/bake.mjs [--preview]
+//   node tools/geo/bake.mjs [--preview]
 // Output per lake, all in the game's 1000 × 625 lake space (x east, y south):
 //   frame     lon/lat box, metres per lake unit, map width in miles
 //   mask      main-lake water at GW × GH cells, run-length coded (navigable water)
