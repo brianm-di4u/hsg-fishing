@@ -1,0 +1,245 @@
+{
+ "from": "games/trivia/data/questions.json",
+ "notes": [
+  {
+   "id": "hs-0121",
+   "q": "Which dam formed Lake Hamilton, and when was it completed?",
+   "a": "Carpenter Dam, 1931",
+   "text": "Arkansas Power & Light developed the lake; Carpenter Dam, a concrete gravity dam, was completed in 1931 and the lake was created in 1932.",
+   "source": "Wikipedia: Lake Hamilton",
+   "claim": false
+  },
+  {
+   "id": "hs-0122",
+   "q": "About how many acres is Lake Hamilton?",
+   "a": "About 7,200",
+   "text": "Wikipedia gives Lake Hamilton as 7,200 acres; Lake Catherine, the smaller of the two lakes, is about 1,940 acres.",
+   "source": "Wikipedia: Lake Hamilton",
+   "claim": false
+  },
+  {
+   "id": "hs-0123",
+   "q": "Which dam forms Lake Catherine, and when was it built?",
+   "a": "Remmel Dam, 1924",
+   "text": "Both Remmel and Carpenter dams were listed on the National Register in 1992.",
+   "source": "Wikipedia: Lake Catherine",
+   "claim": false
+  },
+  {
+   "id": "hs-0124",
+   "q": "What type of dam is Lake Catherine's Remmel Dam?",
+   "a": "Ambursen flat-slab buttress",
+   "text": "It was built in 1924 by Ford, Bacon & Davis with Ambursen Construction.",
+   "source": "Wikipedia: Lake Catherine",
+   "claim": false
+  },
+  {
+   "id": "hs-0126",
+   "q": "Which dam creates Lake Ouachita near Hot Springs?",
+   "a": "Blakely Mountain Dam",
+   "text": "The Army Corps of Engineers built the 231-ft dam from 1948 to 1953.",
+   "source": "Wikipedia: Lake Ouachita",
+   "claim": false
+  },
+  {
+   "id": "hs-0127",
+   "q": "About how many islands does Lake Ouachita have?",
+   "a": "About 200",
+   "text": "Wikipedia's infobox lists 200 islands for the lake.",
+   "source": "Wikipedia: Lake Ouachita",
+   "claim": false
+  },
+  {
+   "id": "hs-0128",
+   "q": "Which historic healing springs does Lake Ouachita State Park preserve?",
+   "a": "Three Sisters Springs",
+   "text": "The 360-acre park opened in 1955.",
+   "source": "Wikipedia: Lake Ouachita State Park",
+   "claim": false
+  },
+  {
+   "id": "hs-0130",
+   "q": "On which river is DeGray Lake, south of Hot Springs?",
+   "a": "The Caddo River",
+   "text": "The dam is approximately eight miles above the river's confluence with the Ouachita River.",
+   "source": "Wikipedia: DeGray Lake",
+   "claim": false
+  },
+  {
+   "id": "hs-0131",
+   "q": "According to Wikipedia, DeGray Lake holds the distinction as the first Corps of Engineers impoundment able to do what?",
+   "a": "Pump water back",
+   "text": "Wikipedia calls it the first \"pump back capable\" impoundment in the history of the Corps of Engineers.",
+   "source": "Wikipedia: DeGray Lake",
+   "claim": true
+  },
+  {
+   "id": "hs-0132",
+   "q": "What is DeGray Lake's maximum depth?",
+   "a": "About 200 ft",
+   "text": "Its average depth is about 47 ft.",
+   "source": "Wikipedia: DeGray Lake",
+   "claim": false
+  },
+  {
+   "id": "hs-0134",
+   "q": "What is the Arkansas state-record walleye, and where was it caught?",
+   "a": "22 lb 11 oz, Greers Ferry Lake",
+   "text": "It was caught at Greers Ferry Lake on March 12, 1982.",
+   "source": "AGFC: State records",
+   "claim": false
+  },
+  {
+   "id": "hs-0135",
+   "q": "What is Arkansas's statewide daily limit for black bass?",
+   "a": "10, no more than 4 smallmouth",
+   "text": "The possession limit is triple the daily limit.",
+   "source": "AGFC: Statewide lengths and daily limits",
+   "claim": false
+  },
+  {
+   "id": "hs-0136",
+   "q": "What is Arkansas's statewide daily crappie limit?",
+   "a": "30",
+   "text": "Black and white crappie are combined in the limit; area-specific rules may differ.",
+   "source": "AGFC: Statewide lengths and daily limits",
+   "claim": false
+  },
+  {
+   "id": "hs-0137",
+   "q": "What is the Arkansas state-record striped bass?",
+   "a": "64 lb 8 oz",
+   "text": "AGFC lists it as caught at Beaver Lake Tailwater on 04/28/2000.",
+   "source": "AGFC: State records",
+   "claim": false
+  },
+  {
+   "id": "hs-0138",
+   "q": "Why must Lake Ouachita's striped bass be stocked every year?",
+   "a": "They don't reproduce naturally there",
+   "text": "AGFC says striped bass do not reproduce naturally in the wild, apart from one Arkansas River population; Lake Ouachita is one of four lakes it stocks.",
+   "source": "Arkansas Game & Fish Commission: Striped Bass",
+   "claim": false
+  },
+  {
+   "id": "hs-0139",
+   "q": "What tree did AGFC and the Corps mostly use for new Lake Ouachita fish brush piles?",
+   "a": "Cedar",
+   "text": "AGFC said the brush piles would sit in the 20- to 25-foot range most of the year, on points near the mid-lake islands.",
+   "source": "AGFC: Improving angling odds at Lake Ouachita",
+   "claim": false
+  },
+  {
+   "id": "hs-0140",
+   "q": "What lure caught the 11-lb Lake Hamilton largemouth at a May 2024 club tournament?",
+   "a": "Texas-rigged Zoom Speed Craw",
+   "text": "The color was Green Pumpkin Magic.",
+   "source": "AGFC: Tourney anglers catch a couple of whopper bass in Lake Hamilton",
+   "claim": false
+  },
+  {
+   "id": "hs-0141",
+   "q": "How many acres is Garvan Woodland Gardens on Lake Hamilton?",
+   "a": "210",
+   "text": "The University of Arkansas owns the garden.",
+   "source": "Wikipedia: Garvan Woodland Gardens",
+   "claim": false
+  },
+  {
+   "id": "hs-0143",
+   "q": "What does the name of novaculite, the Ouachita whetstone rock, mean in Latin?",
+   "a": "Razor stone",
+   "text": "Novaculite takes its name from the Latin for \"razor stone.\"",
+   "source": "Encyclopedia of Arkansas: Novaculite",
+   "claim": false
+  },
+  {
+   "id": "hs-0144",
+   "q": "What two industry grades are Garland County novaculite whetstones sold as?",
+   "a": "Washita and Arkansas",
+   "text": "\"Washita\" is duller and porous; \"Arkansas\" is finer-grained, waxy and denser.",
+   "source": "Encyclopedia of Arkansas: Novaculite",
+   "claim": false
+  },
+  {
+   "id": "hs-0159",
+   "q": "Into which lake does Hot Springs Creek empty after flowing under Bathhouse Row?",
+   "a": "Lake Hamilton",
+   "text": "Wikipedia says the creek flows from Whittington Avenue through the southern city before emptying into Lake Hamilton.",
+   "source": "Wikipedia: Hot Springs, Arkansas",
+   "claim": false
+  },
+  {
+   "id": "hs-0169",
+   "q": "Which rock found around Hot Springs is used to make Arkansas whetstones?",
+   "a": "Novaculite",
+   "text": "The Arkansas Geological Survey calls novaculite a recrystallized variety of chert made of very small quartz grains.",
+   "source": "Arkansas Geological Survey: Novaculite",
+   "claim": false
+  },
+  {
+   "id": "hs-0173",
+   "q": "Which fish does the AGFC stock from November through April in the Ouachita River tailwaters below Carpenter Dam?",
+   "a": "Rainbow trout",
+   "text": "The AGFC stocks catchable rainbow trout there to take advantage of cooler water temperatures.",
+   "source": "AGFC: Trout stocking (Ouachita River tailwaters)",
+   "claim": false
+  },
+  {
+   "id": "hs-0174",
+   "q": "Which Arkansas state fish hatchery sits on Lake Hamilton?",
+   "a": "Andrew Hulsey State Fish Hatchery",
+   "text": "The entry places it on the south side of Lake Hamilton, which is also its water source.",
+   "source": "Encyclopedia of Arkansas: Arkansas Game and Fish Commission State Fish Hatcheries",
+   "claim": false
+  },
+  {
+   "id": "hs-0175",
+   "q": "Eagle-watch cruises at Lake Ouachita State Park in January and February look for which bird?",
+   "a": "Bald eagle",
+   "text": "Per the Democrat-Gazette, Lake Ouachita State Park runs eagle-watch cruises in winter, and DeGray Lake holds its Eagles Et Cetera festival.",
+   "source": "Arkansas Democrat-Gazette: Eagle-watching excursions take off at state parks (2019)",
+   "claim": false
+  },
+  {
+   "id": "hs-0176",
+   "q": "Which month is the wettest in Hot Springs on average?",
+   "a": "May",
+   "text": "Wikipedia says rainfall is highest in May, which averages about 6.5 inches.",
+   "source": "Wikipedia: Hot Springs, Arkansas",
+   "claim": false
+  },
+  {
+   "id": "hs-0177",
+   "q": "What is Hot Springs' record high temperature?",
+   "a": "115°F",
+   "text": "It was reached in 1936 and again in 1986.",
+   "source": "Wikipedia: Hot Springs, Arkansas",
+   "claim": false
+  },
+  {
+   "id": "hs-0178",
+   "q": "About how much snow does Hot Springs average per year?",
+   "a": "About 1.1 inches",
+   "text": "Wikipedia's climate table lists average annual snowfall of 1.1 inches.",
+   "source": "Wikipedia: Hot Springs, Arkansas",
+   "claim": false
+  },
+  {
+   "id": "hs-0179",
+   "q": "About how long is the Ouachita River, which is dammed into Lakes Ouachita, Hamilton and Catherine?",
+   "a": "About 605 miles",
+   "text": "It rises in Polk County and joins the Tensas in Louisiana.",
+   "source": "Wikipedia: Ouachita River",
+   "claim": false
+  },
+  {
+   "id": "hs-0170",
+   "q": "Which oak grows naturally at only four sites in the world, all in the Ouachita Mountains?",
+   "a": "Maple-leaf oak",
+   "text": "The maple-leaf oak (Quercus acerifolia) is found at only four sites worldwide, all of them in the Ouachitas.",
+   "source": "Wikipedia: Ouachita Mountains",
+   "claim": false
+  }
+ ]
+}

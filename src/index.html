@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ouachita Bass Classic</title>
+<meta name="description" content="An original fishing-tournament game on the lakes around Hot Springs, Arkansas. Part of the open-source Hot Springs Games collection (MIT).">
+<link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="scene-title">
+<div id="stage"><canvas id="cv" tabindex="0" aria-label="Game view: the lake map or the water at your fishing spot. Use the arrow keys to pick spots on the map; Space to cast and reel while fishing."></canvas></div>
+<header id="hud" hidden>
+  <button id="btn-menu" class="tb" aria-label="Pause menu (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+  <div class="hud-item" id="hud-clock"></div>
+  <div class="hud-item" id="hud-well"></div>
+  <div class="hud-item" id="hud-wx"></div>
+  <span class="spacer"></span>
+  <button id="btn-help" class="tb" aria-label="How to play (?)"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9.2 9.3a2.9 2.9 0 1 1 4.3 2.5c-.9.5-1.5 1.1-1.5 2.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.4" r="1.3" fill="currentColor"/></svg></button>
+  <button id="btn-sound" class="tb" aria-label="Mute sound (M)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="x" d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</header>
+<main id="scenes">
+  <section id="scene-title" aria-label="Title"></section>
+  <section id="scene-campaign" aria-label="Follow the River" hidden></section>
+  <section id="scene-setup" aria-label="Setup" hidden></section>
+  <section id="scene-briefing" aria-label="Briefing" hidden></section>
+  <section id="scene-weighin" aria-label="Weigh-in" hidden></section>
+  <section id="scene-results" aria-label="Results" hidden></section>
+  <section id="scene-shop" aria-label="Tackle shop" hidden></section>
+  <section id="scene-journal" aria-label="Journal" hidden></section>
+  <section id="scene-help" aria-label="How to play" hidden></section>
+  <section id="scene-settings" aria-label="Settings" hidden></section>
+</main>
+<aside id="card" aria-label="Spot details" hidden></aside>
+<div id="mapbar" hidden></div>
+<div id="fishbar" hidden></div>
+<div id="status" role="status" hidden></div>
+<div id="toast" role="status" hidden></div>
+<div id="modal" hidden></div>
+<div id="live" class="sr-only" aria-live="assertive"></div>
+<!-- @inline ../data/dock-notes.json as DOCK_NOTES -->
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
