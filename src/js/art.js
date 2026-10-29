@@ -3,10 +3,21 @@ import { SPECIES } from './data.js';
 import { makeRng, lerp } from './util.js';
 
 const fishCache = new Map();
+// Painted species plates (trimmed images, head right) registered by plates.js when the art pack loads.
+export const PLATES = {};
 
 // Draw a fish centered at (x, y), length `len` px, facing right (dir 1) or left (-1). Cached per size/DPR.
+// Uses the painted plate when it is loaded (the vector fish is the fallback, and ?art=0 keeps it).
 export function drawFish(ctx, spId, x, y, len, opts = {}) {
   const dir = opts.dir ?? 1, dpr = opts.dpr || 1, rot = opts.rot || 0;
+  const pl = PLATES[spId];
+  if (pl) {
+    const w = len * (SPECIES[spId] ? SPECIES[spId].art.len : 1) * 1.08, h = w * pl.height / pl.width;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(dir, 1);
+    if (opts.alpha != null) ctx.globalAlpha *= opts.alpha;
+    ctx.imageSmoothingQuality = 'high'; ctx.drawImage(pl, -w / 2, -h / 2, w, h);
+    ctx.restore(); return;
+  }
   const key = `${spId}|${Math.round(len)}|${dpr}`;
   let spr = fishCache.get(key);
   if (!spr) { spr = renderFish(spId, Math.round(len), dpr); fishCache.set(key, spr); }
@@ -126,8 +137,23 @@ export function drawBobber(ctx, x, y, r) {
   ctx.restore();
 }
 
-// Title backdrop: sunrise over Ouachita ridges and a lake. t = seconds (ambient), reduced = no motion.
+// Painted backdrops (asset pack "scenes"), registered by plates.js: title-wide, title-tall, weighin, dam-*.
+export const SCENES = {};
+// Cover-fit an image, with an optional slow drift; returns false if it isn't loaded.
+function cover(ctx, img, w, h, t = 0, reduced = true, ax = 0.5, ay = 0.5) {
+  if (!img) return false;
+  const k = Math.max(w / img.width, h / img.height) * (reduced ? 1 : 1.03 + 0.015 * Math.sin(t * 0.05));
+  const dw = img.width * k, dh = img.height * k;
+  ctx.drawImage(img, (w - dw) * ax, (h - dh) * ay, dw, dh); return true;
+}
+
+// Title backdrop: the painted key art (wide or tall by screen shape) with drifting glitter; else the vector scene.
 export function drawTitle(ctx, w, h, t, reduced) {
+  const art = h > w * 1.1 ? SCENES['title-tall'] || SCENES['title-wide'] : SCENES['title-wide'];
+  if (cover(ctx, art, w, h, t, reduced, h > w * 1.1 ? 0.72 : 0.5, 0.6)) {
+    const v = ctx.createLinearGradient(0, 0, 0, h); v.addColorStop(0, 'rgba(14,34,51,0.15)'); v.addColorStop(0.55, 'rgba(14,34,51,0)'); v.addColorStop(1, 'rgba(14,34,51,0.35)');
+    ctx.fillStyle = v; ctx.fillRect(0, 0, w, h); return;
+  }
   const sky = ctx.createLinearGradient(0, 0, 0, h * 0.55);
   sky.addColorStop(0, '#1E4E79'); sky.addColorStop(0.55, '#B5568F'); sky.addColorStop(0.85, '#F2A541'); sky.addColorStop(1, '#F6D9A0');
   ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h * 0.56);
@@ -173,8 +199,9 @@ export function drawTitle(ctx, w, h, t, reduced) {
   ctx.globalAlpha = 1;
 }
 
-// Weigh-in backdrop: dusk sky, lake, dock planks and string lights.
+// Weigh-in backdrop: the painted dusk ramp stage, else dusk sky, lake, dock planks and string lights.
 export function drawWeighIn(ctx, w, h, t, reduced) {
+  if (cover(ctx, SCENES.weighin, w, h, t, reduced, h > w * 1.1 ? 0.18 : 0.5, h > w * 1.1 ? 0 : 0.5)) { ctx.fillStyle = 'rgba(10,14,24,0.28)'; ctx.fillRect(0, 0, w, h); return; }
   const sky = ctx.createLinearGradient(0, 0, 0, h * 0.5);
   sky.addColorStop(0, '#14121F'); sky.addColorStop(0.6, '#1E4E79'); sky.addColorStop(1, '#B5568F');
   ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h * 0.5);

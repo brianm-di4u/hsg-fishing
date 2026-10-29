@@ -1,0 +1,291 @@
+{
+ "catherine": {
+  "depthScale": 70,
+  "ramp": [
+   590,
+   318
+  ],
+  "spots": {
+   "c-tail": [
+    40,
+    345
+   ],
+   "c-gravel": [
+    150,
+    343
+   ],
+   "c-laydown": [
+    330,
+    445
+   ],
+   "c-bluff": [
+    300,
+    352
+   ],
+   "c-docks": [
+    842,
+    300
+   ],
+   "c-channel": [
+    620,
+    302
+   ],
+   "c-ccc": [
+    822,
+    402
+   ],
+   "c-stump": [
+    902,
+    440
+   ],
+   "c-riprap": [
+    944,
+    478
+   ]
+  },
+  "landmarks": {
+   "carpenter": [
+    22,
+    336
+   ],
+   "remmel": [
+    958,
+    470
+   ],
+   "lcsp": [
+    792,
+    385
+   ],
+   "couchwood": [
+    815,
+    297
+   ]
+  }
+ },
+ "hamilton": {
+  "depthScale": 110,
+  "ramp": [
+   700,
+   392
+  ],
+  "spots": {
+   "h-upper": [
+    270,
+    148
+   ],
+   "h-hatch": [
+    455,
+    445
+   ],
+   "h-creek": [
+    866,
+    292
+   ],
+   "h-docks": [
+    612,
+    455
+   ],
+   "h-hump": [
+    800,
+    415
+   ],
+   "h-seawall": [
+    548,
+    300
+   ],
+   "h-garvan": [
+    850,
+    452
+   ],
+   "h-channel": [
+    900,
+    400
+   ],
+   "h-pine": [
+    750,
+    560
+   ],
+   "h-riprap": [
+    948,
+    393
+   ]
+  },
+  "landmarks": {
+   "carpenter": [
+    958,
+    385
+   ],
+   "garvan": [
+    864,
+    438
+   ],
+   "hatchery": [
+    430,
+    470
+   ],
+   "creek": [
+    870,
+    268
+   ],
+   "hotsprings": [
+    816,
+    22
+   ]
+  },
+  "names": {
+   "h-creek": "Hot Springs Creek Mouth"
+  }
+ },
+ "ouachita": {
+  "depthScale": 260,
+  "ramp": [
+   880,
+   410
+  ],
+  "spots": {
+   "o-upper": [
+    90,
+    280
+   ],
+   "o-milfoil": [
+    200,
+    275
+   ],
+   "o-long": [
+    380,
+    330
+   ],
+   "o-shad": [
+    200,
+    470
+   ],
+   "o-main": [
+    450,
+    370
+   ],
+   "o-geo": [
+    520,
+    360
+   ],
+   "o-p28": [
+    480,
+    330
+   ],
+   "o-p30": [
+    530,
+    345
+   ],
+   "o-p31": [
+    580,
+    320
+   ],
+   "o-p33": [
+    620,
+    350
+   ],
+   "o-p34": [
+    660,
+    330
+   ],
+   "o-p36": [
+    700,
+    345
+   ],
+   "o-creek": [
+    470,
+    160
+   ],
+   "o-hydrilla": [
+    500,
+    500
+   ],
+   "o-dam": [
+    905,
+    440
+   ]
+  },
+  "landmarks": {
+   "blakely": [
+    915,
+    443
+   ],
+   "losp": [
+    960,
+    306
+   ],
+   "pine": [
+    972,
+    451
+   ],
+   "geofloat": [
+    560,
+    340
+   ]
+  },
+  "names": {
+   "o-creek": "Irons Fork Channel"
+  }
+ },
+ "degray": {
+  "depthScale": 240,
+  "ramp": [
+   560,
+   300
+  ],
+  "spots": {
+   "d-caddo": [
+    60,
+    240
+   ],
+   "d-timber": [
+    440,
+    175
+   ],
+   "d-brushy": [
+    480,
+    410
+   ],
+   "d-flats": [
+    720,
+    380
+   ],
+   "d-stump": [
+    690,
+    440
+   ],
+   "d-channel": [
+    620,
+    320
+   ],
+   "d-island": [
+    800,
+    380
+   ],
+   "d-lodge": [
+    830,
+    360
+   ],
+   "d-dam": [
+    958,
+    480
+   ]
+  },
+  "landmarks": {
+   "degraydam": [
+    958,
+    492
+   ],
+   "lodge": [
+    827,
+    367
+   ],
+   "caddo": [
+    40,
+    225
+   ]
+  },
+  "names": {
+   "d-brushy": "Brushy Creek Hump"
+  }
+ }
+}

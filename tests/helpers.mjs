@@ -11,8 +11,14 @@ export async function waitFor(t, pred, ms = 8000, label = 'condition') {
   return t.state();
 }
 
+// Wait until the 3D layer and the painted plates have finished loading (or fell back to 2D).
+export async function assetsReady(t) {
+  return waitFor(t, (q) => !q.gfx || ((q.gfx.ready || q.gfx.mode === '2d') && !q.gfx.loading && q.gfx.plates), 30000, '3D layer and plates loaded');
+}
+
 // Start a seeded quick tournament / free day; start:true launches straight to the map.
 export async function quick(t, o = {}) {
+  await assetsReady(t);
   await t.seed(o.seed ?? 7);
   if (o.settings) await t.game('setState', { settings: o.settings });
   await t.game('newGame', { mode: o.mode || 'quick', lake: o.lake || 'hamilton', month: o.month || 5, tier: o.tier || 'regional', seed: o.seed ?? 7, start: o.start ?? true, weather: o.weather, hour: o.hour, chapter: o.chapter });

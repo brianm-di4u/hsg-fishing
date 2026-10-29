@@ -6,6 +6,7 @@ export const tests = [
     name: 'select a spot and run there',
     async run(t) {
       await quick(t, { lake: 'hamilton', month: 5 });
+      await t.waitForStable(); // the lake's terrain decodes asynchronously; pins move once the 3D map takes over
       let lay = await t.game('act', 'layout');
       const p = lay.points.find((q) => q.id === 'h-garvan');
       t.expect(!!p, 'Garvan Point marker');

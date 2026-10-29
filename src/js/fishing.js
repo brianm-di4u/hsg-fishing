@@ -105,9 +105,13 @@ export function oddsHere(over = {}) {
 // ---------- aim and cast ----------
 export const ringAt = (t) => (1 + Math.cos((2 * Math.PI * t) / RING_PERIOD)) / 2; // 1 = widest (worst), 0 = tightest
 export function aimAt(x, y) { const F = G.S.fish; if (!F || F.phase !== 'aim') return; F.aim.x = clamp(x, 0.02, 0.98); F.aim.y = clamp(y, 0.02, 0.9); }
-export function beginCharge() { const F = G.S.fish; if (!F || F.phase !== 'aim' || F.charge != null) return false; F.charge = 0; return true; }
-export function releaseCharge() {
+// A real press measures the hold in wall-clock time (fair on slow frames); main.js shifts the start across pauses.
+export const CHARGE = { start: null };
+// `at` is the input event's timestamp, so a busy frame between the event and its handler doesn't shorten the hold.
+export function beginCharge(real = false, at = performance.now()) { const F = G.S.fish; if (!F || F.phase !== 'aim' || F.charge != null) return false; F.charge = 0; CHARGE.start = real ? at : null; return true; }
+export function releaseCharge(at = performance.now()) {
   const F = G.S.fish; if (!F || F.charge == null) return false;
+  if (CHARGE.start != null) { F.charge = Math.max(0, (at - CHARGE.start) / 1000); CHARGE.start = null; }
   const acc = 1 - ringAt(F.charge); F.charge = null;
   return cast(F.aim.x, F.aim.y, acc);
 }
@@ -139,7 +143,7 @@ export function tickFish(dt) {
   const S = G.S, F = S.fish; if (!F || S.scene !== 'fish') return;
   F.t += dt;
   if (F.msgT > 0) { F.msgT -= dt; if (F.msgT <= 0) F.msg = null; }
-  if (F.charge != null) F.charge += dt;
+  if (F.charge != null) F.charge = CHARGE.start != null ? (performance.now() - CHARGE.start) / 1000 : F.charge + dt;
   switch (F.phase) {
     case 'flight': {
       F.flight.t += dt;

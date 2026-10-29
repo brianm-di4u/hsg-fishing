@@ -1,0 +1,265 @@
+{
+ "items": [
+  {
+   "name": "fish-largemouth",
+   "src": "fish/largemouth.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-spotted",
+   "src": "fish/spotted.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-smallmouth",
+   "src": "fish/smallmouth.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-whiteCrappie",
+   "src": "fish/whiteCrappie.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-blackCrappie",
+   "src": "fish/blackCrappie.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-bluegill",
+   "src": "fish/bluegill.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-redear",
+   "src": "fish/redear.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-channelCat",
+   "src": "fish/channelCat.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-blueCat",
+   "src": "fish/blueCat.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-flathead",
+   "src": "fish/flathead.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-striper",
+   "src": "fish/striper.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-hybrid",
+   "src": "fish/hybrid.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-whiteBass",
+   "src": "fish/whiteBass.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-yellowBass",
+   "src": "fish/yellowBass.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-walleye",
+   "src": "fish/walleye.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-trout",
+   "src": "fish/trout.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-pike",
+   "src": "fish/pike.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-muskie",
+   "src": "fish/muskie.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-drum",
+   "src": "fish/drum.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "fish-gar",
+   "src": "fish/gar.png",
+   "pack": "fish",
+   "w": 720,
+   "keyWhite": 24,
+   "trim": true,
+   "quality": 0.84
+  },
+  {
+   "name": "scene-title-wide",
+   "src": "scenes/title-wide.png",
+   "pack": "scenes",
+   "w": 1280,
+   "quality": 0.8
+  },
+  {
+   "name": "scene-title-tall",
+   "src": "scenes/title-tall.png",
+   "pack": "scenes",
+   "w": 820,
+   "quality": 0.8
+  },
+  {
+   "name": "scene-weighin",
+   "src": "scenes/weighin.png",
+   "pack": "scenes",
+   "w": 1280,
+   "quality": 0.78
+  },
+  {
+   "name": "scene-dam-remmel",
+   "src": "scenes/dam-remmel.png",
+   "pack": "scenes",
+   "w": 480,
+   "quality": 0.8
+  },
+  {
+   "name": "scene-dam-carpenter",
+   "src": "scenes/dam-carpenter.png",
+   "pack": "scenes",
+   "w": 480,
+   "quality": 0.8
+  },
+  {
+   "name": "scene-dam-blakely",
+   "src": "scenes/dam-blakely.png",
+   "pack": "scenes",
+   "w": 480,
+   "quality": 0.8
+  },
+  {
+   "name": "scene-dam-degray",
+   "src": "scenes/dam-degray.png",
+   "pack": "scenes",
+   "w": 480,
+   "quality": 0.8
+  }
+ ],
+ "models": [
+  {
+   "name": "boat",
+   "src": "blender/export/boat.glb",
+   "pack": "models"
+  },
+  {
+   "name": "pine",
+   "src": "blender/export/pine.glb",
+   "pack": "models"
+  },
+  {
+   "name": "oak",
+   "src": "blender/export/oak.glb",
+   "pack": "models"
+  },
+  {
+   "name": "oak_bare",
+   "src": "blender/export/oak_bare.glb",
+   "pack": "models"
+  },
+  {
+   "name": "cedar",
+   "src": "blender/export/cedar.glb",
+   "pack": "models"
+  },
+  {
+   "name": "rock",
+   "src": "blender/export/rock.glb",
+   "pack": "models"
+  }
+ ]
+}

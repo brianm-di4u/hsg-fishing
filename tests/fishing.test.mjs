@@ -1,13 +1,23 @@
 // The fishing loop: cast (mouse, touch, keys), retrieve and depth, bite and hook-set, fight, snags, catch card (AC9–AC14).
 import { quick, fishAt, castTo, hookFish, waitFor } from './helpers.mjs';
 
-const toScreen = (lay, x, y) => [lay.water.x + x * lay.water.w, lay.water.y + y * lay.water.h];
+// spot space → screen through the game (a 3D projection when WebGL is up, the flat water rect in 2D)
+const toScreen = (t, x, y) => t.game('act', 'toScreen', x, y);
 
+// The cast scatters by (1 − accuracy) (fishing.js: σ = (1 − acc)·0.18·distance·0.7 per axis), so the tolerance is
+// 3σ plus a margin: an input test checks that the lure goes where it was aimed, not how well the ring was timed.
 async function landedNear(t, x, y) {
   const s = await waitFor(t, (q) => q.fish && q.fish.phase === 'retrieve', 4000, 'lure in the water');
   const d = Math.hypot(s.fish.lureP.x - x, s.fish.lureP.y - y);
-  t.expect(d < 0.08, `lure landed near the aim (off by ${d.toFixed(3)})`);
+  const reach = Math.min(0.95, Math.hypot(x - 0.5, y - 0.94)), acc = s.fish.lastAcc ?? 1;
+  const tol = 0.04 + (1 - acc) * 0.18 * reach * 0.7 * 3 * Math.SQRT2;
+  t.expect(d < tol, `lure landed near the aim (off by ${d.toFixed(3)}, allowed ${tol.toFixed(3)} at accuracy ${acc})`);
   return s;
+}
+// Bring the hold to just before the ring's tightest point (0.55 s), so the real release lands near it even with the
+// input latency of a software-rendered headless run (the harness drives SwiftShader at a few frames a second).
+async function holdToTight(t) {
+  await t.game('act', 'chargeAt', 0.44);
 }
 
 export const tests = [
@@ -18,13 +28,13 @@ export const tests = [
       await quick(t, { lake: 'hamilton', month: 5 });
       await fishAt(t, 'h-garvan');
       const lay = await t.game('act', 'layout');
-      const [x, y] = toScreen(lay, 0.4, 0.4);
+      const [x, y] = await toScreen(t, 0.4, 0.4);
       await t.page.mouse.move(x - 60, y + 40);
       await t.page.mouse.down();
       await t.page.mouse.move(x, y, { steps: 6 });
-      await t.page.waitForTimeout(250);
-      await t.shot('09-aim', { wait: false });
-      await t.page.waitForTimeout(290);
+      await t.page.waitForTimeout(200);
+      await t.game('pause'); await t.shot('09-aim', { wait: false }); await t.game('resume'); // the shot's own time doesn't count
+      await holdToTight(t);
       await t.page.mouse.up();
       let s = await t.state();
       t.equal(s.fish.phase, 'flight', 'releasing casts');
@@ -41,7 +51,7 @@ export const tests = [
       await quick(t, { lake: 'hamilton', month: 5 });
       await fishAt(t, 'h-garvan');
       const lay = await t.game('act', 'layout');
-      const [x, y] = toScreen(lay, 0.6, 0.4);
+      const [x, y] = await toScreen(t, 0.6, 0.4);
       await t.touchDrag([x - 30, y + 30], [x, y], { steps: 5, holdMs: 520 });
       let s = await waitFor(t, (q) => q.fish.phase !== 'aim', 2000, 'cast started');
       t.expect(['flight', 'retrieve'].includes(s.fish.phase), 'touch press-drag-release casts');
@@ -63,7 +73,7 @@ export const tests = [
       let s = await t.state();
       t.expect(Math.abs(s.fish.aim.x - 0.41) < 0.005 && Math.abs(s.fish.aim.y - 0.39) < 0.005, 'arrows move the aim');
       await t.page.keyboard.down(' ');
-      await t.page.waitForTimeout(540);
+      await holdToTight(t);
       await t.page.keyboard.up(' ');
       s = await t.state();
       t.expect(['flight', 'retrieve'].includes(s.fish.phase), 'Space hold/release casts');
@@ -135,7 +145,7 @@ export const tests = [
       // hooked by a real click on the water
       await t.game('act', 'forceBite', 'largemouth', 3.25);
       const lay = await t.game('act', 'layout');
-      if (t.viewport === 'mobile') await t.tap(toScreen(lay, 0.5, 0.5)); else await t.page.mouse.click(...toScreen(lay, 0.5, 0.5));
+      const p = await toScreen(t, 0.5, 0.5); if (t.viewport === 'mobile') await t.tap(p); else await t.page.mouse.click(...p);
       s = await t.state();
       t.equal(s.fish.phase, 'fight', 'tap/click during the bite sets the hook');
       await t.game('resume');

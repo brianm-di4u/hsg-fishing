@@ -1,5 +1,18 @@
 # REPORT: Ouachita Bass Classic (`games/fishing`)
 
+## Visual pass (2026-10): see VISUAL-REPORT.md
+
+The game now renders the lake map and the fishing spot in 3D with three.js r180 (vendored), on the real lakes:
+USGS NHD shorelines and islands, 3DEP terrain, NLCD land cover and national road data, with spots and landmarks
+re-placed at real positions. It also has Blender models (the bass boat and Ouachita trees), 20 painted species plates,
+painted title, dam and weigh-in art, a radial tension gauge, a fish-finder sonar, an underwater camera, and weather
+and time of day. The 2D renderer described below remains as the fallback (`?gl=0`, no WebGL2, Settings "2D").
+
+The download is no longer one file: `index.html` (862 KB) loads `vendor/three-0.180.0.min.js` and three asset packs in
+`assets/` after first paint. All of them work from file:// and offline. Test count, performance and review scores
+are in `VISUAL-REPORT.md`; the 3D work is planned in `VISUAL-PLAN.md`. The sections below describe the original
+build, and their facts and mechanics are unchanged.
+
 ## What was built
 
 An original fishing-tournament game on the real lakes around Hot Springs, Arkansas, shipped as one
@@ -185,8 +198,8 @@ hooked fish.
 - **Fun is checked by a scripted bot, not by people.** The bot plays whole days with odds it can read through a test
   hook, which a person cannot, and a 0.25 s reaction time. People will do worse at first. The first club event
   may still feel hard, and it is worth a human pass.
-- **Lake shapes are stylized**, not geographic. That is deliberate (no traced outlines), but Hamilton's real
-  shoreline is far more intricate.
+- ~~Lake shapes are stylized~~: since the visual pass the lakes are the real USGS shorelines (see VISUAL-REPORT.md).
+  Depths are still estimated.
 - **Water temperatures, fish weights, bite odds, spawn windows beyond the sourced crappie values, generation times,
   tournament rules, payouts, ramps, spots and anglers are game logic or fiction.** The game labels them so on
   screen and in the help.

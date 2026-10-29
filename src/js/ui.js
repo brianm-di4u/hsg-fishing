@@ -5,7 +5,7 @@ import { getLake } from './lakes.js';
 import { fmtW, fmtWShort, fmtClock, fmtMoney, esc, clamp } from './util.js';
 import { airTemp, troutSeason, kickerActive, genAt } from './sim.js';
 import { runHome, runMinutes, limits, standings, playerBag, generating, canFish, lureList } from './game.js';
-import { drawFish } from './art.js';
+import { drawFish, SCENES as ART_SCENES } from './art.js';
 
 const $ = (s) => document.querySelector(s);
 export const UI = { wi: null, cardFor: null, noteIdx: 0, journalTab: 'species', lastScene: null };
@@ -82,7 +82,8 @@ R.campaign = () => {
     const prev = CHAPTERS[CHAPTERS.indexOf(ch) - 1];
     const lockTxt = ch.id === 'side' ? 'Finish top 5 at Lake Catherine to take the side trip.' : prev ? `Finish top ${prev.need} in ${prev.event} to open${prev.gate ? ' ' + prev.gate : ' this event'}.` : '';
     return `<li class="chain-node ${open ? 'open' : 'locked'} ${passed ? 'passed' : ''} ${ch.side ? 'side' : ''}">
-      <div class="dam"><b>${esc(L.dam)}</b><span>${L.damYear}</span></div>
+      ${(() => { const art = ART_SCENES['dam-' + { catherine: 'remmel', hamilton: 'carpenter', ouachita: 'blakely', degray: 'degray' }[ch.lake]];
+        return art ? `<div class="dam art" style="background-image:url('${art.src}')"><span class="cap"><b>${esc(L.dam)}</b> ${L.damYear}</span></div>` : `<div class="dam"><b>${esc(L.dam)}</b><span>${L.damYear}</span></div>`; })()}
       <div class="lake-card">
         <h3>${esc(L.name)} <small>${MONTHS[ch.month - 1]}</small></h3>
         <p class="ev">${esc(ch.event)} · ${esc(T.name)}${T.days ? ' · 2 days' : ''}${T.pairs ? ' · pairs' : ''}</p>
@@ -146,6 +147,7 @@ R.briefing = () => {
   const n = nextNote();
   return `<div class="page brief">
     <header class="page-h"><button class="btn ghost back" data-act="quit">← Quit</button><h2>${esc(E.name)}</h2></header>
+    ${(() => { const art = ART_SCENES['dam-' + { catherine: 'remmel', hamilton: 'carpenter', ouachita: 'blakely', degray: 'degray' }[E.lake]]; return art ? `<div class="hero-banner" style="background-image:url('${art.src}')" role="img" aria-label="${esc(L.dam)}, painted"><span class="cap">${esc(L.name)} · ${esc(L.dam)} (${L.damYear})</span></div>` : ''; })()}
     <div class="cols">
       <section class="card"><h3>${esc(L.name)} · ${MONTHS[E.month - 1]}</h3><ul class="facts">${L.facts.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></section>
       <section class="card"><h3>Format</h3>${lines.map((l) => `<p>${l}</p>`).join('')}</section>
@@ -218,7 +220,7 @@ export function renderCard() {
 export function renderFishbar() {
   const S = G.S, F = S.fish; if (!F) return;
   const lure = LURES[F.lure];
-  const label = { aim: 'Hold to cast', flight: '…', retrieve: F.reel ? 'Reeling' : 'Hold to reel', bite: 'SET!', fight: F.reel ? 'Reeling' : 'Hold to reel', landed: '…', lost: '…', snag: '…', back: '…' }[F.phase] || '…';
+  const label = { aim: 'Hold to cast', flight: 'Casting', retrieve: F.reel ? 'Reeling' : 'Hold to reel', bite: 'SET!', fight: F.reel ? 'Reeling' : 'Hold to reel', landed: 'Landed!', lost: 'Lost it', snag: 'Snagged', back: 'Reeling in' }[F.phase] || 'Wait';
   const sp = (k, t) => `<button class="seg ${F.speed === k ? 'on' : ''}" aria-pressed="${F.speed === k}" data-act="speed" data-v="${k}" title="${t} retrieve (${k === 'slow' ? 1 : k === 'med' ? 2 : 3})">${t}</button>`;
   const bar = $('#fishbar');
   const html = `<button class="btn lure" data-act="lureMenu" aria-label="Change lure (L)"><span class="lname">${esc(lure.short)}</span><small>${esc(F.color)}</small></button>
@@ -230,6 +232,8 @@ export function renderFishbar() {
 export function status(text) { const el = $('#status'); if (el.textContent !== text) el.textContent = text || ''; el.hidden = !text; }
 export function announce(text) { const el = $('#live'); el.textContent = ''; setTimeout(() => { el.textContent = text; }, 30); }
 let toastT = null;
+// One message region: a scene change or a modal clears it, so stale toasts never sit over other UI.
+export function clearToast() { const el = $('#toast'); clearTimeout(toastT); el.classList.remove('show'); el.hidden = true; }
 export function toast(text, ms = 2600) {
   const el = $('#toast'); el.textContent = text; el.hidden = false; el.classList.add('show');
   clearTimeout(toastT); toastT = setTimeout(() => { el.classList.remove('show'); el.hidden = true; }, ms);
@@ -238,6 +242,7 @@ export function toast(text, ms = 2600) {
 // ---------- modals ----------
 export function showModal(html, cls = '') {
   const m = $('#modal'); m.innerHTML = `<div class="sheet ${cls}" role="dialog" aria-modal="true">${html}</div>`; m.hidden = false;
+  clearToast(); status('');
   G.S.ui.modal = cls || 'modal';
   const b = pickFocus(m); if (b) try { b.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
 }
@@ -249,15 +254,23 @@ export function catchCard(fish) {
   const first = J && J.n === 1;
   const info = fish.info;
   const keepLabel = info.ok ? (info.cull ? `Keep (cull ${W(info.cull.w)})` : 'Keep') : 'Keep';
-  showModal(`<h2>${esc(sp.name)}</h2><canvas id="catch-cv" width="320" height="150" aria-hidden="true"></canvas>
-    <p class="weight">${W(fish.w)}</p>
-    ${first ? '<p class="badge new">New species for your journal!</p>' : pb ? '<p class="badge new">New personal best!</p>' : ''}
+  // length from the largemouth standard-weight curve (log10 W[g] = −5.528 + 3.273 log10 L[mm]), shape-adjusted: a game estimate
+  const lenIn = Math.pow(10, (Math.log10(fish.w * 453.6) + 5.528) / 3.273) / 25.4 * Math.cbrt(0.36 / sp.art.h);
+  const spot = getLake(S.day.lake).spot(S.fish ? S.fish.spot : 'ramp');
+  showModal(`<div class="catch-hero"><canvas id="catch-cv" aria-hidden="true"></canvas></div><h2>${esc(sp.name)}</h2>
+    <p class="weight">${W(fish.w)}<span class="len">about ${Math.round(lenIn)} in</span></p>
+    <p class="sm where">${esc(spot ? spot.name : '')} · ${esc(LAKES[S.day.lake].name)}</p>
+    ${info.ok && info.cull ? `<p class="cull">Culls your smallest fish: <b>${W(info.cull.w)}</b> (${esc(SPECIES[info.cull.sp].name.toLowerCase())})</p>` : ''}
+    <p class="ribbons">${first ? '<span class="badge new">New species for your journal!</span>' : pb ? '<span class="badge new">New personal best!</span>' : ''}${sp.bass && fish.w >= 5 ? '<span class="badge kick">Kicker</span>' : ''}${S.day && S.day.livewell.length && fish.w > Math.max(...S.day.livewell.map((f) => f.w)) ? '<span class="badge big">Big fish of the day</span>' : ''}</p>
     <p class="sm">${esc(LURES[fish.lure].short)}, ${esc(fish.color)} · ${fmtClock(fish.t)}</p>
     ${info.ok ? '' : `<p class="why">${esc(info.why)}</p>`}
     <div class="row center">${info.ok ? `<button class="btn primary" data-act="keep" autofocus>${keepLabel}</button>` : ''}<button class="btn ${info.ok ? '' : 'primary'}" data-act="release" ${info.ok ? '' : 'autofocus'}>Release</button></div>`, 'catch');
   const cv = document.getElementById('catch-cv'); const dpr = Math.min(2, window.devicePixelRatio || 1);
-  cv.width = 320 * dpr; cv.height = 150 * dpr; cv.style.width = '320px'; cv.style.height = '150px';
-  const c = cv.getContext('2d'); c.scale(dpr, dpr); drawFish(c, fish.sp, 160, 75, clamp(150 + Math.sqrt(fish.w) * 30, 150, 260) / (SPECIES[fish.sp].art.len), { dpr });
+  const cw = Math.min(520, window.innerWidth - 64), ch = Math.round(cw * 0.42);
+  cv.width = cw * dpr; cv.height = ch * dpr; cv.style.width = cw + 'px'; cv.style.height = ch + 'px';
+  // the fish's size on the card grows with its weight relative to the species' range
+  const k = clamp(Math.cbrt(fish.w / sp.max), 0.28, 1);
+  const c = cv.getContext('2d'); c.scale(dpr, dpr); drawFish(c, fish.sp, cw / 2, ch / 2, (cw * (0.42 + 0.48 * k)) / (sp.art.len * 1.08), { dpr });
 }
 
 export function lureMenu() {
@@ -279,6 +292,15 @@ export function pauseMenu() {
 }
 
 // ---------- weigh-in ----------
+// Seven-segment display (SVG): lit segments glow, unlit ones stay faintly visible like a real LED board.
+const SEG = { 0: 'abcdef', 1: 'bc', 2: 'abdeg', 3: 'abcdg', 4: 'bcfg', 5: 'acdfg', 6: 'acdefg', 7: 'abc', 8: 'abcdefg', 9: 'abcdfg', '-': 'g' };
+function sevenSeg(text) {
+  const P = { a: 'M4,0 h14 l3,3 -3,3 h-14 l-3,-3z', b: 'M22,4 l3,3 v13 l-3,3 -3,-3 v-13z', c: 'M22,26 l3,3 v13 l-3,3 -3,-3 v-13z', d: 'M4,46 h14 l3,3 -3,3 h-14 l-3,-3z',
+    e: 'M0,26 l3,3 v13 l-3,3 -3,-3 v-13z', f: 'M0,4 l3,3 v13 l-3,3 -3,-3 v-13z', g: 'M4,23 h14 l3,3 -3,3 h-14 l-3,-3z' };
+  const chars = String(text).split(''); const W = 32;
+  const body = chars.map((ch, i) => { const on = SEG[ch] || ''; return `<g transform="translate(${6 + i * W},4) skewX(-6)">${Object.keys(P).map((k) => `<path d="${P[k]}" class="${on.includes(k) ? 'on' : 'off'}"/>`).join('')}</g>`; }).join('');
+  return `<svg class="seg7" viewBox="0 0 ${chars.length * W + 8} 60" aria-hidden="true">${body}</svg>`;
+}
 R.weighin = () => {
   const S = G.S, E = S.event, res = E.results[E.day - 1], T = TIERS[E.tier];
   const wi = UI.wi || { step: 99 };
@@ -298,9 +320,9 @@ R.weighin = () => {
     <div class="scoreboard" role="group" aria-label="Weigh-in scoreboard">
       <div class="grille" aria-hidden="true"></div>
       <h2>${esc(E.name)}${E.days > 1 ? ` · Day ${E.day}` : ''}</h2>
-      <div class="neon" aria-live="polite">${digits}</div>
+      <div class="neon" aria-live="polite"><span class="sr-only">${digits}</span>${sevenSeg(digits)}</div>
       <p class="neon-sub">${T.derby ? 'heaviest fish' : `${bag.fish.length} fish`}${bag.penalty ? ` · late ${bag.late} min: −${W(bag.penalty)}` : ''}${bag.dq ? ' · DISQUALIFIED (over 15 min late)' : ''}</p>
-      <ul class="bag">${bag.fish.slice(0, shown).map((f) => `<li><canvas data-fish="${f.sp}" width="96" height="44" aria-hidden="true"></canvas><span>${esc(SPECIES[f.sp].name)}</span><b>${fmtWShort(f.w)}</b></li>`).join('')}</ul>
+      <ul class="bag">${bag.fish.slice(0, shown).map((f) => `<li><canvas data-fish="${f.sp}" data-w="${f.w}" width="96" height="44" aria-hidden="true"></canvas><span>${esc(SPECIES[f.sp].name)}</span><b>${fmtWShort(f.w)}</b></li>`).join('')}</ul>
     </div>
     ${board}
     <div class="row center">${wi.step >= 99 || wi.done ? (E.day < E.days && !T.free ? '<button class="btn primary" data-act="nextDay" autofocus>On to day 2</button>' : '<button class="btn primary" data-act="finish" autofocus>Results</button>') : '<button class="btn" data-act="skipWeigh">Skip</button>'}</div>
@@ -310,7 +332,8 @@ function paintWeighFish() {
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   document.querySelectorAll('canvas[data-fish]').forEach((cv) => {
     cv.width = 96 * dpr; cv.height = 44 * dpr; cv.style.width = '96px'; cv.style.height = '44px';
-    const c = cv.getContext('2d'); c.scale(dpr, dpr); drawFish(c, cv.dataset.fish, 48, 22, 74 / SPECIES[cv.dataset.fish].art.len, { dpr });
+    const k = cv.dataset.w ? clamp(0.55 + Math.cbrt(+cv.dataset.w / SPECIES[cv.dataset.fish].max) * 0.6, 0.55, 1) : 1; // bigger fish, bigger thumbnail
+    const c = cv.getContext('2d'); c.scale(dpr, dpr); drawFish(c, cv.dataset.fish, 48, 22, 74 * k / SPECIES[cv.dataset.fish].art.len, { dpr });
   });
 }
 

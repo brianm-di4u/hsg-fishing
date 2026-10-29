@@ -76,3 +76,17 @@ or opened in a browser. Commit hashes are from the GitHub API on 2026-10-28.
 | Depth from shore distance | chamfer distance transform |
 
 The tension band, bite model, seasonal fish model, weigh-in simulation and lake generation are original.
+
+## 7. Visual pass (2026-10): vendored libraries, data and generated assets
+
+| Item | Source | Version / date | License | Where |
+|---|---|---|---|---|
+| three.js core + `GLTFLoader` + `BufferGeometryUtils` | npm `three` (official package of mrdoob/three.js) | 0.180.0 (r180) | MIT, `vendor/three-LICENSE.txt` | `vendor/three-0.180.0.min.js`, rebuilt by `tools/vendor/build-three.mjs` |
+| esbuild (build tool only, not shipped) | npm `esbuild` | 0.25.10 | MIT | used by `tools/vendor/build-three.mjs` to make the IIFE bundle |
+| USGS NHD, 3DEP, National Transportation Dataset; USGS/MRLC NLCD 2021 | The National Map and MRLC REST/WMS services | fetched 2026-10-28 | U.S. public domain | `data/geo/*.json` via `tools/geo/`; sources in `research/geo/SOURCES.md` |
+| 20 species plates, title and weigh-in key art, 4 dam illustrations | generated for this game with OpenAI image generation (Codex), from our prompts | 2026-10-28 | original to this project (MIT with the game) | `art-src/fish/`, `art-src/scenes/` (PNGs git-ignored) → `assets/pack-fish.js`, `assets/pack-scenes.js` |
+| Bass boat, shortleaf pine, oak (leaf and bare), eastern redcedar, rocks | modelled for this game in Blender 5.2 from Python scripts | 2026-10-29 | original (MIT) | `art-src/blender/scripts/*.py` → `art-src/blender/export/*.glb` → `assets/pack-models.js` |
+
+No three.js example shaders were copied: the water, sky, terrain, canopy and fish shaders are written for this game.
+The planar reflection follows the standard oblique-near-plane mirror technique (Lengyel, "Oblique View Frustum Depth
+Projection and Clipping", 2005), implemented from the paper's description.

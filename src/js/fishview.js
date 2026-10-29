@@ -101,11 +101,13 @@ function background(sc, R, dpr, month, gen, clarity) {
 }
 
 // R = water rect, SR = sonar rect, t = real seconds, dt = frame seconds, opts {dpr, reduced, night}
+// opts.overlay = { project(x, y, depthFt) → [sx, sy] }: the 3D scene draws the world; only the HUD layer is drawn here.
 export function drawSpot(ctx, R, SR, dt, opts) {
   const S = G.S, F = S.fish, D = S.day; if (!F) return;
   const L = getLake(D.lake); const spot = L.spot(F.spot); const sc = sceneFor(spot);
   const gen = genAt(D.gen, D.clock) && spot.type === 'tailrace';
   FX.time += dt;
+  if (opts.overlay) { drawSpotHud(ctx, R, SR, F, sc, opts); return; }
   const X = (x) => R.x + x * R.w, Y = (y) => R.y + y * R.h;
   ctx.drawImage(background(sc, R, opts.dpr, D.month, gen, D.weather.clarity), R.x, R.y, R.w, R.h);
   ctx.save(); ctx.beginPath(); ctx.rect(R.x, R.y, R.w, R.h); ctx.clip();
@@ -242,6 +244,78 @@ function drawLureDot(ctx, x, y, F, depth) {
   ctx.globalAlpha = 1;
 }
 
+// The HUD layer over the 3D spot: aim hint, bite cue, fight arrow, gauge, sonar.
+function drawSpotHud(ctx, R, SR, F, sc, opts) {
+  const pr = opts.overlay.project;
+  for (const rp of FX.ripples) rp.t += 1; FX.ripples = []; FX.drops = [];
+  if (F.phase === 'aim' && F.charge != null && ringAt(F.charge) < 0.15) {
+    const p = pr(F.aim.x, F.aim.y); if (p) { ctx.fillStyle = '#F2A541'; ctx.strokeStyle = 'rgba(14,34,51,0.8)'; ctx.lineWidth = 3; ctx.font = '800 15px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.strokeText('RELEASE', p[0], p[1] - 42); ctx.fillText('RELEASE', p[0], p[1] - 42); }
+  }
+  if (F.phase === 'bite' && F.lureP) {
+    const p = pr(F.lureP.x, F.lureP.y, 0); if (p) {
+      const [lx, ly] = p;
+      ctx.fillStyle = '#F2A541'; ctx.strokeStyle = '#14283A'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(lx, ly - 46, 19, 0, 7); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#14283A'; ctx.font = '900 26px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('!', lx, ly - 45); ctx.textBaseline = 'alphabetic';
+      ctx.strokeStyle = 'rgba(242,165,65,0.85)'; ctx.lineWidth = 3; const k = (FX.time * 3) % 1; ctx.beginPath(); ctx.ellipse(lx, ly, 12 + k * 30, (12 + k * 30) * 0.4, 0, 0, 7); ctx.stroke();
+    }
+  }
+  if (F.phase === 'fight' && F.fight) {
+    const f = F.fight; const p = pr(f.x, f.y, f.jump > 0 ? -2 : 1);
+    if (p && f.jump <= 0) { // which way the fish is running: a chevron pill beside it (pull the rod the other way)
+      const dir = f.heading >= 0 ? 1 : -1; const [fx, fy] = p; const cx = fx + dir * 48, w = 46, h = 22;
+      ctx.fillStyle = 'rgba(14,34,51,0.78)'; roundRect(ctx, cx - w / 2, fy - h / 2, w, h, 11); ctx.fill();
+      ctx.strokeStyle = f.surge > 0 ? '#F2A541' : '#F6F3EC'; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      for (const k of [-7, 5]) { const x0 = cx + dir * k; ctx.beginPath(); ctx.moveTo(x0 - dir * 5, fy - 6); ctx.lineTo(x0 + dir * 2, fy); ctx.lineTo(x0 - dir * 5, fy + 6); ctx.stroke(); }
+      ctx.lineCap = 'butt'; }
+    drawGaugeRadial(ctx, R, f, opts.reduced);
+  }
+  const uw = opts.overlay.underwater;
+  if (uw) {
+    // sun shafts through clear and stained water (a light overlay on the inset)
+    const clar = G.S.day.weather.clarity; if (clar !== 'muddy' && !opts.reduced) { ctx.save(); roundRect(ctx, uw.x, uw.y, uw.w, uw.h, 8); ctx.clip(); ctx.globalCompositeOperation = 'screen';
+      for (let i = 0; i < 5; i++) { const x0 = uw.x + uw.w * (0.1 + i * 0.2) + Math.sin(FX.time * 0.4 + i) * 10; const g = ctx.createLinearGradient(0, uw.y, 0, uw.y + uw.h); g.addColorStop(0, `rgba(190,230,230,${clar === 'clear' ? 0.16 : 0.08})`); g.addColorStop(1, 'rgba(190,230,230,0)');
+        ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x0, uw.y); ctx.lineTo(x0 + 18, uw.y); ctx.lineTo(x0 + 46, uw.y + uw.h); ctx.lineTo(x0 + 22, uw.y + uw.h); ctx.closePath(); ctx.fill(); }
+      ctx.restore(); }
+    ctx.strokeStyle = 'rgba(246,243,236,0.85)'; ctx.lineWidth = 2; roundRect(ctx, uw.x, uw.y, uw.w, uw.h, 8); ctx.stroke();
+    ctx.fillStyle = 'rgba(14,34,51,0.8)'; ctx.fillRect(uw.x + 8, uw.y + 6, 92, 18); ctx.fillStyle = '#F6F3EC'; ctx.font = '700 11px system-ui, sans-serif'; ctx.textAlign = 'left'; ctx.fillText('UNDERWATER', uw.x + 13, uw.y + 19); }
+  if (SR) drawSonar(ctx, SR, F, sc);
+}
+
+// Radial tension gauge beside the reel (3D view): a 240° arc with hatched SLACK, solid GOOD and striped DANGER
+// zones, each labelled, a marker for the tension, the fish's stamina as an inner ring and the line out in the centre.
+function drawGaugeRadial(ctx, R, f, reduced) {
+  const small = R.w < 600; const rad = small ? 56 : 74; const cx = R.x + R.w - rad - (small ? 18 : 30), cy = R.y + R.h - rad - (small ? 16 : 26);
+  const a0 = Math.PI * 0.75, span = Math.PI * 1.5; const ang = (v) => a0 + clamp(v / 1.1, 0, 1) * span;
+  ctx.save();
+  ctx.fillStyle = 'rgba(14,34,51,0.78)'; ctx.beginPath(); ctx.arc(cx, cy, rad + 14, 0, 7); ctx.fill();
+  const band = (v0, v1, fill, pattern) => {
+    ctx.beginPath(); ctx.arc(cx, cy, rad, ang(v0), ang(v1)); ctx.arc(cx, cy, rad - 16, ang(v1), ang(v0), true); ctx.closePath();
+    ctx.fillStyle = fill; ctx.fill();
+    if (pattern) { ctx.save(); ctx.clip(); ctx.strokeStyle = 'rgba(246,243,236,0.45)'; ctx.lineWidth = pattern === 'stripe' ? 3 : 1.5;
+      for (let i = -rad * 2; i < rad * 2; i += pattern === 'stripe' ? 9 : 6) { ctx.beginPath(); if (pattern === 'stripe') { ctx.moveTo(cx + i, cy - rad - 20); ctx.lineTo(cx + i + rad + 40, cy + rad + 20); } else { ctx.moveTo(cx - rad - 20, cy + i); ctx.lineTo(cx + rad + 20, cy + i); } ctx.stroke(); }
+      ctx.restore(); }
+  };
+  band(0, 0.15, '#4A5675', 'hatch'); band(0.15, 0.85, '#2E6A3C', null); band(0.85, 1.1, '#9A2A1C', 'stripe');
+  ctx.strokeStyle = '#F6F3EC'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(cx, cy, rad, a0, a0 + span); ctx.stroke(); ctx.beginPath(); ctx.arc(cx, cy, rad - 16, a0, a0 + span); ctx.stroke();
+  // stamina ring
+  ctx.strokeStyle = 'rgba(195,211,223,0.35)'; ctx.lineWidth = 5; ctx.beginPath(); ctx.arc(cx, cy, rad - 25, a0, a0 + span); ctx.stroke();
+  ctx.strokeStyle = '#F2A541'; ctx.beginPath(); ctx.arc(cx, cy, rad - 25, a0, a0 + span * clamp(f.stamina, 0, 1)); ctx.stroke();
+  // tension marker
+  const shake = f.tension > 0.85 && !reduced ? Math.sin(FX.time * 70) * 0.025 : 0; const a = ang(f.tension) + shake;
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(a);
+  ctx.fillStyle = '#F2A541'; ctx.strokeStyle = '#14283A'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(rad + 9, 0); ctx.lineTo(rad - 22, -7); ctx.lineTo(rad - 22, 7); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+  // labels
+  ctx.font = `800 ${small ? 10 : 11}px system-ui, sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = '#F6F3EC';
+  const lab = (t, v, r2) => { const q = ang(v); ctx.fillText(t, cx + Math.cos(q) * r2, cy + Math.sin(q) * r2); };
+  lab('SLACK', 0.03, rad + 4); lab('GOOD', 0.55, rad + 4); lab('DANGER', 1.05, rad + 4);
+  ctx.font = `800 ${small ? 16 : 20}px system-ui, sans-serif`; ctx.fillText(`${Math.round(f.dist)} ft`, cx, cy - 4);
+  ctx.font = `600 ${small ? 10 : 11}px system-ui, sans-serif`; ctx.fillStyle = '#C3D3DF'; ctx.fillText('line out', cx, cy + 13); ctx.fillText('TENSION', cx, cy + rad - 2);
+  ctx.textBaseline = 'alphabetic';
+  ctx.restore();
+}
+
 // Tension gauge: vertical bar with hatched SLACK, GOOD and striped DANGER zones, labels, stamina and distance.
 function drawGauge(ctx, R, f) {
   const w = R.w < 600 ? 26 : 34, h = Math.min(300, R.h * (R.w < 600 ? 0.42 : 0.6)), x = R.x + 10, y = R.y + (R.h - h) / 2;
@@ -279,11 +353,16 @@ function drawSonar(ctx, SR, F, sc) {
   for (let i = 0; i <= N; i++) { const t = i / N; const x = lerp(BOAT.x, target.x, t), y = lerp(BOAT.y, target.y, t); const d = sc.bottom(x, y); prof.push(d); maxD = Math.max(maxD, d); }
   const scaleD = Math.max(10, Math.ceil((maxD + 3) / 5) * 5);
   const DY = (d) => iy + (d / scaleD) * ih;
-  ctx.fillStyle = '#183F63'; ctx.fillRect(ix, iy, iw, ih);
-  ctx.beginPath(); ctx.moveTo(ix, DY(prof[0]));
-  prof.forEach((d, i) => ctx.lineTo(ix + (i / N) * iw, DY(d)));
-  ctx.lineTo(ix + iw, iy + ih); ctx.lineTo(ix, iy + ih); ctx.closePath(); ctx.fillStyle = '#9C7A55'; ctx.fill();
-  ctx.strokeStyle = '#F2A541'; ctx.lineWidth = 2; ctx.stroke();
+  // fish-finder look: deep-navy water column with faint clutter, bottom returns banded red → yellow → blue
+  const wg = ctx.createLinearGradient(0, iy, 0, iy + ih); wg.addColorStop(0, '#0B2440'); wg.addColorStop(1, '#06182C');
+  ctx.fillStyle = wg; ctx.fillRect(ix, iy, iw, ih);
+  ctx.fillStyle = 'rgba(120,170,220,0.18)'; for (let k = 0; k < 40; k++) { const u = ((k * 0.618) % 1), v = ((k * 0.377) % 1) * 0.8; ctx.fillRect(ix + u * iw, iy + v * ih, 1.5, 1.5); }
+  const bottomPath = () => { ctx.beginPath(); ctx.moveTo(ix, DY(prof[0])); prof.forEach((d, i) => ctx.lineTo(ix + (i / N) * iw, DY(d))); ctx.lineTo(ix + iw, iy + ih); ctx.lineTo(ix, iy + ih); ctx.closePath(); };
+  ctx.save(); bottomPath(); ctx.clip(); ctx.fillStyle = '#14305A'; ctx.fillRect(ix, iy, iw, ih);
+  // returns follow the bottom: a hard red edge, then yellow, then fading blue
+  for (const [off, w, c] of [[16, 18, '#2A5FB0'], [8, 9, '#3C8CFF'], [4, 5, '#FFC23C'], [1.5, 3, '#FF5A3C']]) { ctx.beginPath(); prof.forEach((d, i) => { const x = ix + (i / N) * iw, y = DY(d) + off; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }); ctx.strokeStyle = c; ctx.lineWidth = w; ctx.stroke(); }
+  ctx.restore();
+  ctx.beginPath(); ctx.moveTo(ix, DY(prof[0])); prof.forEach((d, i) => ctx.lineTo(ix + (i / N) * iw, DY(d))); ctx.strokeStyle = '#FFE08A'; ctx.lineWidth = 2; ctx.stroke();
   ctx.fillStyle = '#C3D3DF'; ctx.font = '600 11px system-ui, sans-serif'; ctx.textAlign = 'right';
   const marks = ih < 50 ? [0, scaleD] : [0, scaleD / 2, scaleD];
   for (const d of marks) ctx.fillText(d === scaleD ? `${d} ft` : `${d}`, ix - 4, clamp(DY(d) + 4, iy + 8, iy + ih));
@@ -296,7 +375,9 @@ function drawSonar(ctx, SR, F, sc) {
   // fish marks (sonar upgrade)
   if (S.profile.upgrades.sonar && S.day) {
     const rows = cachedRows(F, target, sc);
-    rows.slice(0, 3).forEach((r, k) => { if (r.v < 0.08) return; const t = 0.35 + k * 0.22; const d = Math.min(r.fishDepth, prof[Math.round(t * N)] - 1); ctx.strokeStyle = '#F2A541'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(ix + t * iw, DY(d) + 4, 6, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); });
+    rows.slice(0, 3).forEach((r, k) => { if (r.v < 0.08) return; const t = 0.35 + k * 0.22; const d = Math.min(r.fishDepth, prof[Math.round(t * N)] - 1);
+      // fish arches, coloured by return strength
+      ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.strokeStyle = r.v > 0.3 ? '#FF7A3C' : '#FFC23C'; ctx.beginPath(); ctx.arc(ix + t * iw, DY(d) + 5, 7, Math.PI * 1.12, Math.PI * 1.88); ctx.stroke(); ctx.lineCap = 'butt'; });
   }
   if (fighting) {
     ctx.fillStyle = '#F6F3EC'; ctx.textAlign = 'right'; ctx.font = '700 12px system-ui, sans-serif';
@@ -314,7 +395,7 @@ function drawSonar(ctx, SR, F, sc) {
 }
 let rowCache = { k: '', rows: [] };
 function cachedRows(F, target, sc) {
-  const k = `${F.spot}|${F.lure}|${F.color}|${F.speed}|${G.S.day.clock}|${Math.round(target.x * 10)}|${Math.round(target.y * 10)}`;
+  const k = `${F.spot}|${F.lure}|${F.color}|${F.speed}|${G.S.day.clock}|${Math.round(target.x * 5)}|${Math.round(target.y * 5)}`;
   if (rowCache.k !== k) { rowCache = { k, rows: oddsHere({ x: target.x, y: target.y }).rows }; }
   return rowCache.rows;
 }
