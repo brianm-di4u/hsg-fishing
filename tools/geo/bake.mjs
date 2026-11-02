@@ -1,4 +1,4 @@
-// Bakes research/geo/raw/ (see fetch.mjs) into data/geo/<lake>.json, the real lake geometry the game uses.
+// Bakes the raw lake geodata (reference/geo/lakes/ or research/geo/raw/; see fetch.mjs) into data/geo/<lake>.json, the real lake geometry the game uses.
 //   node tools/geo/bake.mjs [--preview]
 // Output per lake, all in the game's 1000 × 625 lake space (x east, y south):
 //   frame     lon/lat box, metres per lake unit, map width in miles
@@ -18,7 +18,8 @@ import { LAKE_GEO, KX, KY } from './lakes-geo.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
-const RAW = path.join(ROOT, 'research/geo/raw');
+// Raw geodata: the workspace's shared reference/geo/lakes/ when this repo sits in it, else research/geo/raw/ (fetch.mjs).
+const RAW = fs.existsSync(path.resolve(ROOT, '../../reference/geo')) ? path.resolve(ROOT, '../../reference/geo/lakes') : path.join(ROOT, 'research/geo/raw');
 const OUT = path.join(ROOT, 'data/geo');
 fs.mkdirSync(OUT, { recursive: true });
 const LW = 1000, LH = 625, GW = 800, GH = 500, CELL = LW / GW;

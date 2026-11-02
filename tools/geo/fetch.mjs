@@ -1,4 +1,5 @@
-// Downloads the public-domain geodata the lake maps are built from into research/geo/raw/ (git-ignored).
+// Downloads the public-domain geodata the lake maps are built from (git-ignored): the workspace's reference/geo/lakes/,
+// or research/geo/raw/ outside it.
 //   node tools/geo/fetch.mjs [--force]
 // Sources (all U.S. federal works, public domain):
 //   USGS National Hydrography Dataset (NHD), Waterbody - Large Scale (layer 12) and Line (layer 2, FType 343 dams)
@@ -14,7 +15,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LAKE_GEO } from './lakes-geo.mjs';
 
-const RAW = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../research/geo/raw');
+// The workspace's shared reference/geo/lakes/ when this repo sits in it, else research/geo/raw/ here (git-ignored).
+const SHARED = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../reference/geo/lakes');
+const RAW = fs.existsSync(path.dirname(SHARED)) ? SHARED : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../research/geo/raw');
 fs.mkdirSync(RAW, { recursive: true });
 const force = process.argv.includes('--force');
 
