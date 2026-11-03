@@ -217,3 +217,12 @@ hooked fish.
   This suite has 9 files and 43 tests.
 - The balance test plays 8 tournament days (about 2.5 minutes). It runs only at `--milestone final`, `scratch` or
   `balance`, using `t.milestone`. A harness-level "slow" tag would be cleaner.
+
+## Update: repainted backgrounds (2026-11-02)
+
+The title paintings (wide and tall) and the weigh-in scene were repainted. The new source PNGs replace the
+`art-src/art.json` sources (git-ignored; the workspace keeps copies of the old and new paintings in
+`reference/backgrounds/`) and were packed with the usual tools. Older descriptions of these paintings in
+VISUAL-REPORT.md refer to the previous art.
+
+`npm test`: 97/97 passed.
