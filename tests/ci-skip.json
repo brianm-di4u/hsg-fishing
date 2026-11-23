@@ -1,0 +1,10 @@
+[
+  {
+    "test": "fps, idle loop, memory and size",
+    "why": "measures frame rate in software WebGL on the runner"
+  },
+  {
+    "test": "four lake maps",
+    "why": "screenshots of the 3D lakes time out while the runner renders them"
+  }
+]
