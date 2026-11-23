@@ -15,9 +15,13 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { LAKE_GEO } from './lakes-geo.mjs';
 
-// The workspace's shared reference/geo/lakes/ when this repo sits in it, else research/geo/raw/ here (git-ignored).
-const SHARED = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../../reference/geo/lakes');
-const RAW = fs.existsSync(path.dirname(SHARED)) ? SHARED : path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../research/geo/raw');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
+// Shared workspace material (reference/, research/, sibling repos/): $HSG_WORKSPACE, else this repo's grandparent
+// (the workspace root when the repo sits in <workspace>/repos/).
+const WORKSPACE = process.env.HSG_WORKSPACE || path.resolve(ROOT, '..', '..');
+// <workspace>/reference/geo/lakes/ when the workspace has reference/geo/, else research/geo/raw/ here (git-ignored).
+const SHARED = path.join(WORKSPACE, 'reference', 'geo', 'lakes');
+const RAW = fs.existsSync(path.dirname(SHARED)) ? SHARED : path.join(ROOT, 'research', 'geo', 'raw');
 fs.mkdirSync(RAW, { recursive: true });
 const force = process.argv.includes('--force');
 
