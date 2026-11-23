@@ -18,8 +18,11 @@ import { LAKE_GEO, KX, KY } from './lakes-geo.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '../..');
-// Raw geodata: the workspace's shared reference/geo/lakes/ when this repo sits in it, else research/geo/raw/ (fetch.mjs).
-const RAW = fs.existsSync(path.resolve(ROOT, '../../reference/geo')) ? path.resolve(ROOT, '../../reference/geo/lakes') : path.join(ROOT, 'research/geo/raw');
+// Shared workspace material (reference/, research/, sibling repos/): $HSG_WORKSPACE, else this repo's grandparent
+// (the workspace root when the repo sits in <workspace>/repos/).
+const WORKSPACE = process.env.HSG_WORKSPACE || path.resolve(ROOT, '..', '..');
+// Raw geodata: <workspace>/reference/geo/lakes/ when the workspace has reference/geo/, else research/geo/raw/ (fetch.mjs).
+const RAW = fs.existsSync(path.join(WORKSPACE, 'reference', 'geo')) ? path.join(WORKSPACE, 'reference', 'geo', 'lakes') : path.join(ROOT, 'research/geo/raw');
 const OUT = path.join(ROOT, 'data/geo');
 fs.mkdirSync(OUT, { recursive: true });
 const LW = 1000, LH = 625, GW = 800, GH = 500, CELL = LW / GW;
